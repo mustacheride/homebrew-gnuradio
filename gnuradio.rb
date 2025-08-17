@@ -136,7 +136,7 @@ class Gnuradio < Formula
         -DENABLE_VOLK=ON
         -DENABLE_VOLK_PROFILING=ON
         -DENABLE_GR_SOAPY=ON
-        -DENABLE_GR_IIO=ON
+        -DENABLE_GR_IIO=OFF
         -DENABLE_DOXYGEN=OFF
         -DENABLE_GRAPHVIZ=OFF
         -DCMAKE_PREFIX_PATH=#{prefix}
