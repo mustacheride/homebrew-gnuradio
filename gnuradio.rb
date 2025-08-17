@@ -19,8 +19,9 @@ class Gnuradio < Formula
   depends_on "log4cpp"
   depends_on "orc"
   depends_on "pybind11"
+  depends_on "qt@5"
   depends_on "pyqt@5"
-  depends_on "qwt"
+  depends_on "qwt-qt5"
   depends_on "sdl"
   depends_on "spdlog"
   depends_on "swig"
@@ -109,14 +110,14 @@ class Gnuradio < Formula
     
     # Create build directory
     mkdir "build" do
-      # Configure CMake
+      # Configure CMake with proper Qt5 and QWT settings
       args = std_cmake_args + %W[
         -DCMAKE_BUILD_TYPE=Release
         -DPYTHON_EXECUTABLE=#{venv.root}/bin/python
         -DPYTHON_INCLUDE_DIR=#{python.include}/python#{python_version}
         -DPYTHON_LIBRARY=#{python.lib}/libpython#{python_version}.dylib
         -DPYTHON_PACKAGES_PATH=#{lib}/python#{python_version}/site-packages
-        -DENABLE_GR_QTGUI=OFF
+        -DENABLE_GR_QTGUI=ON
         -DENABLE_GR_WXGUI=OFF
         -DENABLE_GR_CTRLPORT=ON
         -DENABLE_GR_DTV=ON
@@ -140,8 +141,9 @@ class Gnuradio < Formula
         -DENABLE_DOXYGEN=OFF
         -DENABLE_GRAPHVIZ=OFF
         -DCMAKE_PREFIX_PATH=#{prefix}
-        -DQWT_INCLUDE_DIRS=#{Formula["qwt"].include}
-        -DQWT_LIBRARIES=#{Formula["qwt"].lib}/qwt.framework
+        -DQt5_DIR=#{Formula["qt@5"].lib}/cmake/Qt5
+        -DQWT_INCLUDE_DIRS=#{Formula["qwt-qt5"].include}
+        -DQWT_LIBRARIES=#{Formula["qwt-qt5"].lib}/qwt.framework
       ]
 
       # Build and install
@@ -150,13 +152,13 @@ class Gnuradio < Formula
       system "make", "install"
     end
 
-    # Create configuration directory and file
+    # Create minimal configuration file
     (etc/"gnuradio").mkpath
     (etc/"gnuradio/config.conf").write <<~EOS
       [grc]
       local_blocks_path=#{share}/gnuradio/grc/blocks
       global_blocks_path=#{share}/gnuradio/grc/blocks
-      default_flow_graph=#{share}/gnuradio/examples
+      default_flow_graph=
       xterm_executable=/usr/bin/open
       help_browser=default
       canvas_grid_size=8
@@ -189,148 +191,6 @@ class Gnuradio < Formula
       show_block_video=1
       show_block_zeromq=1
       show_block_network=1
-      show_block_serial=1
-      show_block_tcp=1
-      show_block_udp=1
-      show_block_http=1
-      show_block_websocket=1
-      show_block_mqtt=1
-      show_block_amqp=1
-      show_block_kafka=1
-      show_block_redis=1
-      show_block_mongodb=1
-      show_block_sqlite=1
-      show_block_postgresql=1
-      show_block_mysql=1
-      show_block_oracle=1
-      show_block_sqlserver=1
-      show_block_db2=1
-      show_block_informix=1
-      show_block_sybase=1
-      show_block_teradata=1
-      show_block_vertica=1
-      show_block_snowflake=1
-      show_block_bigquery=1
-      show_block_redshift=1
-      show_block_dynamodb=1
-      show_block_cassandra=1
-      show_block_hbase=1
-      show_block_hive=1
-      show_block_impala=1
-      show_block_presto=1
-      show_block_trino=1
-      show_block_druid=1
-      show_block_pinot=1
-      show_block_kylin=1
-      show_block_doris=1
-      show_block_starrocks=1
-      show_block_clickhouse=1
-      show_block_tidb=1
-      show_block_cockroachdb=1
-      show_block_yugabytedb=1
-      show_block_singlestore=1
-      show_block_memsql=1
-      show_block_planetscale=1
-      show_block_neon=1
-      show_block_supabase=1
-      show_block_firebase=1
-      show_block_appwrite=1
-      show_block_parse=1
-      show_block_back4app=1
-      show_block_kinvey=1
-      show_block_aws=1
-      show_block_azure=1
-      show_block_gcp=1
-      show_block_ibm=1
-      show_block_oracle_cloud=1
-      show_block_alibaba=1
-      show_block_tencent=1
-      show_block_baidu=1
-      show_block_huawei=1
-      show_block_digitalocean=1
-      show_block_linode=1
-      show_block_vultr=1
-      show_block_ovh=1
-      show_block_hetzner=1
-      show_block_contabo=1
-      show_block_netcup=1
-      show_block_strato=1
-      show_block_ionos=1
-      show_block_1and1=1
-      show_block_hostgator=1
-      show_block_bluehost=1
-      show_block_hostinger=1
-      show_block_namecheap=1
-      show_block_godaddy=1
-      show_block_register=1
-      show_block_namesilo=1
-      show_block_porkbun=1
-      show_block_cloudflare=1
-      show_block_route53=1
-      show_block_clouddns=1
-      show_block_dnsimple=1
-      show_block_dyn=1
-      show_block_noip=1
-      show_block_duckdns=1
-      show_block_freedns=1
-      show_block_afraid=1
-      show_block_he=1
-      show_block_linode_dns=1
-      show_block_digitalocean_dns=1
-      show_block_vultr_dns=1
-      show_block_ovh_dns=1
-      show_block_hetzner_dns=1
-      show_block_contabo_dns=1
-      show_block_netcup_dns=1
-      show_block_strato_dns=1
-      show_block_ionos_dns=1
-      show_block_1and1_dns=1
-      show_block_hostgator_dns=1
-      show_block_bluehost_dns=1
-      show_block_hostinger_dns=1
-      show_block_namecheap_dns=1
-      show_block_godaddy_dns=1
-      show_block_register_dns=1
-      show_block_namesilo_dns=1
-      show_block_porkbun_dns=1
-      show_block_cloudflare_dns=1
-      show_block_route53_dns=1
-      show_block_clouddns_dns=1
-      show_block_dnsimple_dns=1
-      show_block_dyn_dns=1
-      show_block_noip_dns=1
-      show_block_duckdns_dns=1
-      show_block_freedns_dns=1
-      show_block_afraid_dns=1
-      show_block_he_dns=1
-      show_block_linode_dns_dns=1
-      show_block_digitalocean_dns_dns=1
-      show_block_vultr_dns_dns=1
-      show_block_ovh_dns_dns=1
-      show_block_hetzner_dns_dns=1
-      show_block_contabo_dns_dns=1
-      show_block_netcup_dns_dns=1
-      show_block_strato_dns_dns=1
-      show_block_ionos_dns_dns=1
-      show_block_1and1_dns_dns=1
-      show_block_hostgator_dns_dns=1
-      show_block_bluehost_dns_dns=1
-      show_block_hostinger_dns_dns=1
-      show_block_namecheap_dns_dns=1
-      show_block_godaddy_dns_dns=1
-      show_block_register_dns_dns=1
-      show_block_namesilo_dns_dns=1
-      show_block_porkbun_dns_dns=1
-      show_block_cloudflare_dns_dns=1
-      show_block_route53_dns_dns=1
-      show_block_clouddns_dns_dns=1
-      show_block_dnsimple_dns_dns=1
-      show_block_dyn_dns_dns=1
-      show_block_noip_dns_dns=1
-      show_block_duckdns_dns_dns=1
-      show_block_freedns_dns_dns=1
-      show_block_afraid_dns_dns=1
-      show_block_he_dns_dns=1
     EOS
   end
 
@@ -378,148 +238,6 @@ class Gnuradio < Formula
         show_block_video=1
         show_block_zeromq=1
         show_block_network=1
-        show_block_serial=1
-        show_block_tcp=1
-        show_block_udp=1
-        show_block_http=1
-        show_block_websocket=1
-        show_block_mqtt=1
-        show_block_amqp=1
-        show_block_kafka=1
-        show_block_redis=1
-        show_block_mongodb=1
-        show_block_sqlite=1
-        show_block_postgresql=1
-        show_block_mysql=1
-        show_block_oracle=1
-        show_block_sqlserver=1
-        show_block_db2=1
-        show_block_informix=1
-        show_block_sybase=1
-        show_block_teradata=1
-        show_block_vertica=1
-        show_block_snowflake=1
-        show_block_bigquery=1
-        show_block_redshift=1
-        show_block_dynamodb=1
-        show_block_cassandra=1
-        show_block_hbase=1
-        show_block_hive=1
-        show_block_impala=1
-        show_block_presto=1
-        show_block_trino=1
-        show_block_druid=1
-        show_block_pinot=1
-        show_block_kylin=1
-        show_block_doris=1
-        show_block_starrocks=1
-        show_block_clickhouse=1
-        show_block_tidb=1
-        show_block_cockroachdb=1
-        show_block_yugabytedb=1
-        show_block_singlestore=1
-        show_block_memsql=1
-        show_block_planetscale=1
-        show_block_neon=1
-        show_block_supabase=1
-        show_block_firebase=1
-        show_block_appwrite=1
-        show_block_parse=1
-        show_block_back4app=1
-        show_block_kinvey=1
-        show_block_aws=1
-        show_block_azure=1
-        show_block_gcp=1
-        show_block_ibm=1
-        show_block_oracle_cloud=1
-        show_block_alibaba=1
-        show_block_tencent=1
-        show_block_baidu=1
-        show_block_huawei=1
-        show_block_digitalocean=1
-        show_block_linode=1
-        show_block_vultr=1
-        show_block_ovh=1
-        show_block_hetzner=1
-        show_block_contabo=1
-        show_block_netcup=1
-        show_block_strato=1
-        show_block_ionos=1
-        show_block_1and1=1
-        show_block_hostgator=1
-        show_block_bluehost=1
-        show_block_hostinger=1
-        show_block_namecheap=1
-        show_block_godaddy=1
-        show_block_register=1
-        show_block_namesilo=1
-        show_block_porkbun=1
-        show_block_cloudflare=1
-        show_block_route53=1
-        show_block_clouddns=1
-        show_block_dnsimple=1
-        show_block_dyn=1
-        show_block_noip=1
-        show_block_duckdns=1
-        show_block_freedns=1
-        show_block_afraid=1
-        show_block_he=1
-        show_block_linode_dns=1
-        show_block_digitalocean_dns=1
-        show_block_vultr_dns=1
-        show_block_ovh_dns=1
-        show_block_hetzner_dns=1
-        show_block_contabo_dns=1
-        show_block_netcup_dns=1
-        show_block_strato_dns=1
-        show_block_ionos_dns=1
-        show_block_1and1_dns=1
-        show_block_hostgator_dns=1
-        show_block_bluehost_dns=1
-        show_block_hostinger_dns=1
-        show_block_namecheap_dns=1
-        show_block_godaddy_dns=1
-        show_block_register_dns=1
-        show_block_namesilo_dns=1
-        show_block_porkbun_dns=1
-        show_block_cloudflare_dns=1
-        show_block_route53_dns=1
-        show_block_clouddns_dns=1
-        show_block_dnsimple_dns=1
-        show_block_dyn_dns=1
-        show_block_noip_dns=1
-        show_block_duckdns_dns=1
-        show_block_freedns_dns=1
-        show_block_afraid_dns=1
-        show_block_he_dns=1
-        show_block_linode_dns_dns=1
-        show_block_digitalocean_dns_dns=1
-        show_block_vultr_dns_dns=1
-        show_block_ovh_dns_dns=1
-        show_block_hetzner_dns_dns=1
-        show_block_contabo_dns_dns=1
-        show_block_netcup_dns_dns=1
-        show_block_strato_dns_dns=1
-        show_block_ionos_dns_dns=1
-        show_block_1and1_dns_dns=1
-        show_block_hostgator_dns_dns=1
-        show_block_bluehost_dns_dns=1
-        show_block_hostinger_dns_dns=1
-        show_block_namecheap_dns_dns=1
-        show_block_godaddy_dns_dns=1
-        show_block_register_dns_dns=1
-        show_block_namesilo_dns_dns=1
-        show_block_porkbun_dns_dns=1
-        show_block_cloudflare_dns_dns=1
-        show_block_route53_dns_dns=1
-        show_block_clouddns_dns_dns=1
-        show_block_dnsimple_dns_dns=1
-        show_block_dyn_dns_dns=1
-        show_block_noip_dns_dns=1
-        show_block_duckdns_dns_dns=1
-        show_block_freedns_dns_dns=1
-        show_block_afraid_dns_dns=1
-        show_block_he_dns_dns=1
       EOS
     end
     
@@ -564,14 +282,13 @@ class Gnuradio < Formula
       - VOLK vector optimization library
       - ZeroMQ messaging support
       - SoapySDR support
-      - IIO support
 
       Python dependencies are managed in a virtual environment at:
       #{libexec}/venv
 
       Configuration files have been installed to:
       - System config: #{etc}/gnuradio/config.conf
-      - User config: ~/.gnuradio/config.conf
+      - User config: ~/.config/gnuradio/config.conf
 
       To use custom blocks, add them to the local_blocks_path in your config file.
 
