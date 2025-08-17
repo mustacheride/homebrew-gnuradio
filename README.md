@@ -1,59 +1,118 @@
 # homebrew-gnuradio
 
-This is a collection of [Homebrew](https://github.com/mxcl/homebrew) recipes
-that makes it easier get GNU Radio and friends running on OS X.
+This is a modernized fork of the original [titanous/homebrew-gnuradio](https://github.com/titanous/homebrew-gnuradio) repository, updated to use current Homebrew syntax and standards.
+
+## About This Fork
+
+This repository modernizes the original titanous/homebrew-gnuradio tap by:
+- Updating all formulae to use current Homebrew syntax
+- Adding the new `gr-lora_sdr` formula for LoRa communication
+- Removing deprecated `Formula.factory` calls
+- Adding proper test methods for all formulae
+- Maintaining compatibility with existing GNU Radio installations
+
+## Available Formulae
+
+### Core
+- **gnuradio** - GNU Radio 3.6.5.1 (SDK for signal processing blocks)
+
+### Modules
+- **gr-lora_sdr** - LoRa (Long Range) communication module (NEW)
+- **gr-osmosdr** - OsmoSDR source blocks for various SDR devices
+- **gr-baz** - GNU Radio blocks by Balint Seeber
+- **rtlsdr** - RTL-SDR library and utilities
+
+## System Requirements
+
+This tap has been tested on:
+- macOS Sonoma 14.6.1
+- Homebrew 4.2.0
+- Python 3.13 (via Homebrew)
+- GNU Radio 3.10.12.0 (existing installation)
 
 ## Installation
 
-These steps have been tested on Lion 10.7.4 with Xcode 4.3.2 and Mountain Lion
-10.8 with Xcode 4.4.1.
+### Prerequisites
 
-- Add this line to your profile (ie `~/.bash_profile` or `~/.zshenv`) and reload
-  your shell (`exec $SHELL`)
+Ensure you have Homebrew installed and updated:
+```sh
+brew update
+```
 
-  ```sh
-  export PATH=/usr/local/bin:/usr/local/share/python:$PATH
-  ```
+### Install GNU Radio Core
 
-- Install the python package prerequisites
+The formulae in this tap are designed to work with existing GNU Radio installations. If you don't have GNU Radio installed:
 
-  ```sh
-  brew install python gfortran umfpack swig
-  ```
+```sh
+brew install gnuradio
+```
 
-- Install the prerequisite python packages
+### Install This Tap
 
-  ```sh
-  pip install numpy Cheetah lxml
-  pip install https://github.com/scipy/scipy/tarball/v0.11.0rc2
-  export PKG_CONFIG_PATH="/usr/x11/lib/pkgconfig" pip install http://downloads.sourceforge.net/project/matplotlib/matplotlib/matplotlib-1.1.1/matplotlib-1.1.1.tar.gz
-  ```
+```sh
+brew tap mustacheride/gnuradio
+```
 
-- Install gnuradio (add `--with-qt` for `gr-qtgui`)
+### Install Additional Modules
 
-  ```sh
-  brew tap titanous/homebrew-gnuradio
-  brew install gnuradio
-  ```
-- Create the `~/.gnuradio/config.conf` config file for custom block support
+Most GNU Radio modules are HEAD-only formulae and require the `--HEAD` flag:
 
-  ```ini
-  [grc]
-  local_blocks_path=/usr/local/share/gnuradio/grc/blocks
-  ```
+```sh
+# Install LoRa support
+brew install --HEAD mustacheride/gnuradio/gr-lora_sdr
 
-### Optional (for `gr-wxgui`)
+# Install RTL-SDR support
+brew install mustacheride/gnuradio/rtlsdr
+brew install --HEAD mustacheride/gnuradio/gr-osmosdr
+brew install --HEAD mustacheride/gnuradio/gr-baz
+```
 
-- Before installing `gnuradio`, install `wxmac` 2.9 with python bindings
+### Configuration
 
-  ```sh
-  brew install wxmac --python
-  ```
+Create the `~/.gnuradio/config.conf` config file for custom block support:
 
-### Optional (for rtl-sdr devices)
+```ini
+[grc]
+local_blocks_path=/usr/local/share/gnuradio/grc/blocks
+```
 
-- Install `rtlsdr` and related blocks
+## Usage Examples
 
-  ```sh
-  brew install rtlsdr gr-osmosdr gr-baz --HEAD
-  ```
+Install GNU Radio with LoRa support:
+```sh
+brew tap mustacheride/gnuradio
+brew install --HEAD mustacheride/gnuradio/gr-lora_sdr
+```
+
+Install complete RTL-SDR setup:
+```sh
+brew tap mustacheride/gnuradio
+brew install mustacheride/gnuradio/rtlsdr
+brew install --HEAD mustacheride/gnuradio/gr-osmosdr
+brew install --HEAD mustacheride/gnuradio/gr-baz
+```
+
+## Testing
+
+After installation, verify the modules work:
+
+```sh
+# Test gr-lora_sdr
+/usr/local/bin/python3 -c "import gnuradio.lora_sdr; print('gr-lora_sdr imported successfully')"
+
+# Test gr-osmosdr
+/usr/local/bin/python3 -c "import gnuradio.osmosdr; print('gr-osmosdr imported successfully')"
+```
+
+## Notes
+
+- This fork maintains the original GNU Radio 3.6.5.1 formula for compatibility
+- All formulae have been updated to use modern Homebrew syntax
+- Python modules are installed to the Homebrew Python environment
+- The `gr-lora_sdr` formula is new to this fork and not available in the original repository
+- Formulae are designed to work with existing GNU Radio 3.10+ installations
+- All formulae include proper test methods
+
+## Original Repository
+
+This is a fork of [titanous/homebrew-gnuradio](https://github.com/titanous/homebrew-gnuradio). The original repository provided the foundation for GNU Radio on macOS via Homebrew.

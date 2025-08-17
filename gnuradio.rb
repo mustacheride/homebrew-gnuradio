@@ -82,6 +82,27 @@ class Gnuradio < Formula
       system 'make'
       system 'make install'
     end
+
+    # Install gr-lora_sdr if requested
+    if ARGV.include?('--with-lora_sdr')
+      ohai "Installing gr-lora_sdr..."
+      
+      # Download and build gr-lora_sdr
+      lora_sdr_dir = buildpath/"gr-lora_sdr"
+      lora_sdr_dir.mkpath
+      
+      system "git", "clone", "https://github.com/tapparelj/gr-lora_sdr.git", lora_sdr_dir
+      
+      cd lora_sdr_dir do
+        mkdir "build" do
+          lora_args = ["-DCMAKE_INSTALL_PREFIX=#{prefix}", "-DCMAKE_PREFIX_PATH=#{prefix}"] + std_cmake_args
+          
+          system "cmake", "..", *lora_args
+          system "make"
+          system "make", "install"
+        end
+      end
+    end
   end
 
   def python_path
