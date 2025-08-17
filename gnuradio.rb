@@ -116,7 +116,7 @@ class Gnuradio < Formula
         -DPYTHON_INCLUDE_DIR=#{python.include}/python#{python_version}
         -DPYTHON_LIBRARY=#{python.lib}/libpython#{python_version}.dylib
         -DPYTHON_PACKAGES_PATH=#{lib}/python#{python_version}/site-packages
-        -DENABLE_GR_QTGUI=ON
+        -DENABLE_GR_QTGUI=OFF
         -DENABLE_GR_WXGUI=OFF
         -DENABLE_GR_CTRLPORT=ON
         -DENABLE_GR_DTV=ON
@@ -141,7 +141,7 @@ class Gnuradio < Formula
         -DENABLE_GRAPHVIZ=OFF
         -DCMAKE_PREFIX_PATH=#{prefix}
         -DQWT_INCLUDE_DIRS=#{Formula["qwt"].include}
-        -DQWT_LIBRARIES=#{Formula["qwt"].lib}/libqwt.dylib
+        -DQWT_LIBRARIES=#{Formula["qwt"].lib}/qwt.framework
       ]
 
       # Build and install
