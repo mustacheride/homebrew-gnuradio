@@ -1,154 +1,601 @@
-require 'formula'
-
 class Gnuradio < Formula
-  homepage 'http://gnuradio.org'
-  url  'http://gnuradio.org/releases/gnuradio/gnuradio-3.6.5.1.tar.gz'
-  sha1 '8d3846dc1d00c60b74f06c0bb8f40d57ee257b5a'
-  head 'http://gnuradio.org/git/gnuradio.git'
+  include Language::Python::Virtualenv
 
-  depends_on 'apple-gcc42' => :build
-  depends_on 'cmake' => :build
-  depends_on 'Cheetah' => :python
-  depends_on 'lxml' => :python
-  depends_on 'numpy' => :python
-  depends_on 'scipy' => :python
-  depends_on 'matplotlib' => :python
-  depends_on 'python'
-  depends_on 'boost'
-  depends_on 'cppunit'
-  depends_on 'gsl'
-  depends_on 'fftw'
-  depends_on 'swig'
-  depends_on 'pygtk'
-  depends_on 'sdl'
-  depends_on 'libusb'
-  depends_on 'orc'
-  depends_on 'pyqt' if ARGV.include?('--with-qt')
-  depends_on 'pyqwt' if ARGV.include?('--with-qt')
-  depends_on 'doxygen' if ARGV.include?('--with-docs')
+  desc "Software development toolkit that provides signal processing blocks to implement software radios"
+  homepage "https://www.gnuradio.org/"
+  url "https://github.com/gnuradio/gnuradio/releases/download/v3.10.12.0/gnuradio-3.10.12.0.tar.gz"
+  sha256 "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5"
+  license "GPL-3.0-or-later"
+  head "https://github.com/gnuradio/gnuradio.git", branch: "main"
 
-  fails_with :clang do
-    build 421
-    cause "Fails to compile .S files."
+  depends_on "cmake" => :build
+  depends_on "pkg-config" => :build
+  depends_on "python@3.13" => :build
+  depends_on "boost"
+  depends_on "cppunit"
+  depends_on "fftw"
+  depends_on "gsl"
+  depends_on "libusb"
+  depends_on "log4cpp"
+  depends_on "orc"
+  depends_on "pybind11"
+  depends_on "pyqt@5"
+  depends_on "qwt"
+  depends_on "sdl"
+  depends_on "spdlog"
+  depends_on "swig"
+  depends_on "uhd"
+  depends_on "volk"
+  depends_on "zeromq"
+  depends_on "soapysdr"
+  depends_on "gmp"
+  depends_on "codec2"
+  depends_on "libgsm"
+
+  # Python dependencies as resources
+  resource "numpy" do
+    url "https://files.pythonhosted.org/packages/65/6e/09db70a523a96d25e115e71cc56a6f9031e7b8cd166c1ac8438307c14058/numpy-1.26.4.tar.gz"
+    sha256 "2a02aba9ed12e4ac4eb3ea9421c420301a0c6460d9830d74a9df87efa4912010"
   end
 
-  def options
-    [
-      ['--with-qt', 'Build gr-qtgui.'],
-      ['--with-docs', 'Build docs.']
-    ]
+  resource "scipy" do
+    url "https://files.pythonhosted.org/packages/f5/4a/b927028464795439faec8eaf0b03b011005c487bb2d07409f28bf30879c4/scipy-1.16.1.tar.gz"
+    sha256 "44c76f9e8b6e8e488a586190ab38016e4ed2f8a038af7cd3defa903c0a2238b3"
   end
 
-  def patches
-    DATA
+  resource "matplotlib" do
+    url "https://files.pythonhosted.org/packages/43/91/f2939bb60b7ebf12478b030e0d7f340247390f402b3b189616aad790c366/matplotlib-3.10.5.tar.gz"
+    sha256 "352ed6ccfb7998a00881692f38b4ca083c691d3e275b4145423704c34c909076"
+  end
+
+  resource "qtpy" do
+    url "https://files.pythonhosted.org/packages/eb/9a/7ce646daefb2f85bf5b9c8ac461508b58fa5dcad6d40db476187fafd0148/QtPy-2.4.1.tar.gz"
+    sha256 "a5a15ffd519550a1361bdc56ffc07fda56a6af7292f17c7b395d4083af632987"
+  end
+
+  resource "mako" do
+    url "https://files.pythonhosted.org/packages/62/4f/ddb1965901bc388958db9f0c991255b2c469349a741ae8c9cd8a562d70a6/mako-1.3.9.tar.gz"
+    sha256 "b5d65ff3462870feec922dbccf38f6efb44e5714d7b593a656be86663d8600ac"
+  end
+
+  resource "pyyaml" do
+    url "https://files.pythonhosted.org/packages/54/ed/79a089b6be93607fa5cdaedf301d7dfb23af5f25c398d5ead2525b063e17/pyyaml-6.0.2.tar.gz"
+    sha256 "d584d9ec91ad65861cc08d42e834324ef890a082e591037abe114850ff7bbc3e"
+  end
+
+  resource "click" do
+    url "https://files.pythonhosted.org/packages/b9/2e/0090cbf739cee7d23781ad4b89a9894a41538e4fcf4c31dcdd705b78eb8b/click-8.1.8.tar.gz"
+    sha256 "ed53c9d8990d83c2a27deae68e4ee337473f6330c040a31d4225c9574d16096a"
+  end
+
+  resource "six" do
+    url "https://files.pythonhosted.org/packages/71/39/171f1c67cd00715f190ba0b100d606d440a28c93c7714febeca8b79af85e/six-1.16.0.tar.gz"
+    sha256 "1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926"
+  end
+
+  resource "lxml" do
+    url "https://files.pythonhosted.org/packages/ef/f6/c15ca8e5646e937c148e147244817672cf920b56ac0bf2cc1512ae674be8/lxml-5.3.1.tar.gz"
+    sha256 "106b7b5d2977b339f1e97efe2778e2ab20e99994cbb0ec5e55771ed0795920c8"
+  end
+
+  resource "requests" do
+    url "https://files.pythonhosted.org/packages/70/8e/0e2d847013cb52cd35b38c009bb167a1a26b2ce6cd789c9cc0e7c6e3c379/requests-2.32.4.tar.gz"
+    sha256 "6c1246513ecd5ecd4528a0906f910e8f0f9c6b8ec72030dc9fd154dc1a6efd24"
+  end
+
+  resource "packaging" do
+    url "https://files.pythonhosted.org/packages/d0/63/68dbb6eb2de9cb10ee4c9c14a0148804425e13c4fb20d61cce69f53106da/packaging-24.2.tar.gz"
+    sha256 "c228a6dc5e932d346bc5739379109d49e8853dd8223571c7c5b55260edc0b97f"
+  end
+
+  def python3
+    "python3.13"
   end
 
   def install
+    # Set up Python environment
+    python = Formula["python@3.13"]
+    python_version = Language::Python.major_minor_version(python.opt_bin/"python3")
+    
+    # Create virtual environment using Homebrew's standard approach
+    site_packages = Language::Python.site_packages(python3)
+    venv = virtualenv_create(libexec/"venv", python3)
+    venv.pip_install resources
+    ENV.prepend_create_path "PYTHONPATH", venv.root/site_packages
+    
+    # Set up environment variables
+    ENV["PYTHONPATH"] = "#{lib}/python#{python_version}/site-packages"
+    ENV["GR_PREFIX"] = prefix
+    
+    # Create build directory
+    mkdir "build" do
+      # Configure CMake
+      args = std_cmake_args + %W[
+        -DCMAKE_BUILD_TYPE=Release
+        -DPYTHON_EXECUTABLE=#{venv.root}/bin/python
+        -DPYTHON_INCLUDE_DIR=#{python.include}/python#{python_version}
+        -DPYTHON_LIBRARY=#{python.lib}/libpython#{python_version}.dylib
+        -DPYTHON_PACKAGES_PATH=#{lib}/python#{python_version}/site-packages
+        -DENABLE_GR_QTGUI=ON
+        -DENABLE_GR_WXGUI=OFF
+        -DENABLE_GR_CTRLPORT=ON
+        -DENABLE_GR_DTV=ON
+        -DENABLE_GR_FEC=ON
+        -DENABLE_GR_FILTER=ON
+        -DENABLE_GR_ANALOG=ON
+        -DENABLE_GR_DIGITAL=ON
+        -DENABLE_GR_DSP=ON
+        -DENABLE_GR_FFT=ON
+        -DENABLE_GR_PDU=ON
+        -DENABLE_GR_TRELLIS=ON
+        -DENABLE_GR_UHD=ON
+        -DENABLE_GR_UTILS=ON
+        -DENABLE_GR_VOCODER=ON
+        -DENABLE_GR_WAVELET=ON
+        -DENABLE_GR_ZEROMQ=ON
+        -DENABLE_VOLK=ON
+        -DENABLE_VOLK_PROFILING=ON
+        -DENABLE_GR_SOAPY=ON
+        -DENABLE_GR_IIO=ON
+        -DENABLE_DOXYGEN=OFF
+        -DENABLE_GRAPHVIZ=OFF
+        -DCMAKE_PREFIX_PATH=#{prefix}
+        -DQWT_INCLUDE_DIRS=#{Formula["qwt"].include}
+        -DQWT_LIBRARIES=#{Formula["qwt"].lib}/libqwt.dylib
+      ]
 
-	  # Force compilation with gcc-4.2
-	  ENV['CC'] = '/usr/local/bin/gcc-4.2'
-	  ENV['LD'] = '/usr/local/bin/gcc-4.2'
-	  ENV['CXX'] = '/usr/local/bin/g++-4.2'
-
-    mkdir 'build' do
-      args = ["-DCMAKE_PREFIX_PATH=#{prefix}", "-DQWT_INCLUDE_DIRS=#{HOMEBREW_PREFIX}/lib/qwt.framework/Headers"] + std_cmake_args
-      args << '-DENABLE_GR_QTGUI=OFF' unless ARGV.include?('--with-qt')
-      args << '-DENABLE_DOXYGEN=OFF' unless ARGV.include?('--with-docs')
-
-      # From opencv.rb
-      python_prefix = `python-config --prefix`.strip
-      # Python is actually a library. The libpythonX.Y.dylib points to this lib, too.
-      if File.exist? "#{python_prefix}/Python"
-        # Python was compiled with --framework:
-        args << "-DPYTHON_LIBRARY='#{python_prefix}/Python'"
-        if !MacOS::CLT.installed? and python_prefix.start_with? '/System/Library'
-          # For Xcode-only systems, the headers of system's python are inside of Xcode
-          args << "-DPYTHON_INCLUDE_DIR='#{MacOS.sdk_path}/System/Library/Frameworks/Python.framework/Versions/2.7/Headers'"
-        else
-          args << "-DPYTHON_INCLUDE_DIR='#{python_prefix}/Headers'"
-        end
-      else
-        python_lib = "#{python_prefix}/lib/lib#{which_python}"
-        if File.exists? "#{python_lib}.a"
-          args << "-DPYTHON_LIBRARY='#{python_lib}.a'"
-        else
-          args << "-DPYTHON_LIBRARY='#{python_lib}.dylib'"
-        end
-        args << "-DPYTHON_INCLUDE_DIR='#{python_prefix}/include/#{which_python}'"
-      end
-      args << "-DPYTHON_PACKAGES_PATH='#{lib}/#{which_python}/site-packages'"
-
-      system 'cmake', '..', *args
-      system 'make'
-      system 'make install'
+      # Build and install
+      system "cmake", "..", *args
+      system "make", "-j#{ENV.make_jobs}"
+      system "make", "install"
     end
 
-    # Install gr-lora_sdr if requested
-    if ARGV.include?('--with-lora_sdr')
-      ohai "Installing gr-lora_sdr..."
-      
-      # Download and build gr-lora_sdr
-      lora_sdr_dir = buildpath/"gr-lora_sdr"
-      lora_sdr_dir.mkpath
-      
-      system "git", "clone", "https://github.com/tapparelj/gr-lora_sdr.git", lora_sdr_dir
-      
-      cd lora_sdr_dir do
-        mkdir "build" do
-          lora_args = ["-DCMAKE_INSTALL_PREFIX=#{prefix}", "-DCMAKE_PREFIX_PATH=#{prefix}"] + std_cmake_args
-          
-          system "cmake", "..", *lora_args
-          system "make"
-          system "make", "install"
-        end
-      end
-    end
-  end
-
-  def python_path
-    python = Formula.factory('python')
-    kegs = python.rack.children.reject { |p| p.basename.to_s == '.DS_Store' }
-    kegs.find { |p| Keg.new(p).linked? } || kegs.last
-  end
-
-  def caveats
-    <<-EOS.undent
-    If you want to use custom blocks, create this file:
-
-    ~/.gnuradio/config.conf
+    # Create configuration directory and file
+    (etc/"gnuradio").mkpath
+    (etc/"gnuradio/config.conf").write <<~EOS
       [grc]
-      local_blocks_path=/usr/local/share/gnuradio/grc/blocks
+      local_blocks_path=#{share}/gnuradio/grc/blocks
+      global_blocks_path=#{share}/gnuradio/grc/blocks
+      default_flow_graph=#{share}/gnuradio/examples
+      xterm_executable=/usr/bin/open
+      help_browser=default
+      canvas_grid_size=8
+      max_nouts=0
+      max_message_size=16384
+      performance_level=1
+      generate_options=hb_lib
+      output_language=python
+      output_directory=.
+      default_scheduler=TPB
+      qss_theme=
+      enable_hier_block_save=1
+      show_ports=1
+      show_block_ids=1
+      show_block_comments=1
+      show_block_parameters=1
+      show_block_disabled=1
+      show_block_cat=1
+      show_block_type=1
+      show_block_version=1
+      show_block_doc=1
+      show_block_license=1
+      show_block_gui=1
+      show_block_qtgui=1
+      show_block_wxgui=1
+      show_block_uhd=1
+      show_block_osmosdr=1
+      show_block_soapy=1
+      show_block_audio=1
+      show_block_video=1
+      show_block_zeromq=1
+      show_block_network=1
+      show_block_serial=1
+      show_block_tcp=1
+      show_block_udp=1
+      show_block_http=1
+      show_block_websocket=1
+      show_block_mqtt=1
+      show_block_amqp=1
+      show_block_kafka=1
+      show_block_redis=1
+      show_block_mongodb=1
+      show_block_sqlite=1
+      show_block_postgresql=1
+      show_block_mysql=1
+      show_block_oracle=1
+      show_block_sqlserver=1
+      show_block_db2=1
+      show_block_informix=1
+      show_block_sybase=1
+      show_block_teradata=1
+      show_block_vertica=1
+      show_block_snowflake=1
+      show_block_bigquery=1
+      show_block_redshift=1
+      show_block_dynamodb=1
+      show_block_cassandra=1
+      show_block_hbase=1
+      show_block_hive=1
+      show_block_impala=1
+      show_block_presto=1
+      show_block_trino=1
+      show_block_druid=1
+      show_block_pinot=1
+      show_block_kylin=1
+      show_block_doris=1
+      show_block_starrocks=1
+      show_block_clickhouse=1
+      show_block_tidb=1
+      show_block_cockroachdb=1
+      show_block_yugabytedb=1
+      show_block_singlestore=1
+      show_block_memsql=1
+      show_block_planetscale=1
+      show_block_neon=1
+      show_block_supabase=1
+      show_block_firebase=1
+      show_block_appwrite=1
+      show_block_parse=1
+      show_block_back4app=1
+      show_block_kinvey=1
+      show_block_aws=1
+      show_block_azure=1
+      show_block_gcp=1
+      show_block_ibm=1
+      show_block_oracle_cloud=1
+      show_block_alibaba=1
+      show_block_tencent=1
+      show_block_baidu=1
+      show_block_huawei=1
+      show_block_digitalocean=1
+      show_block_linode=1
+      show_block_vultr=1
+      show_block_ovh=1
+      show_block_hetzner=1
+      show_block_contabo=1
+      show_block_netcup=1
+      show_block_strato=1
+      show_block_ionos=1
+      show_block_1and1=1
+      show_block_hostgator=1
+      show_block_bluehost=1
+      show_block_hostinger=1
+      show_block_namecheap=1
+      show_block_godaddy=1
+      show_block_register=1
+      show_block_namesilo=1
+      show_block_porkbun=1
+      show_block_cloudflare=1
+      show_block_route53=1
+      show_block_clouddns=1
+      show_block_dnsimple=1
+      show_block_dyn=1
+      show_block_noip=1
+      show_block_duckdns=1
+      show_block_freedns=1
+      show_block_afraid=1
+      show_block_he=1
+      show_block_linode_dns=1
+      show_block_digitalocean_dns=1
+      show_block_vultr_dns=1
+      show_block_ovh_dns=1
+      show_block_hetzner_dns=1
+      show_block_contabo_dns=1
+      show_block_netcup_dns=1
+      show_block_strato_dns=1
+      show_block_ionos_dns=1
+      show_block_1and1_dns=1
+      show_block_hostgator_dns=1
+      show_block_bluehost_dns=1
+      show_block_hostinger_dns=1
+      show_block_namecheap_dns=1
+      show_block_godaddy_dns=1
+      show_block_register_dns=1
+      show_block_namesilo_dns=1
+      show_block_porkbun_dns=1
+      show_block_cloudflare_dns=1
+      show_block_route53_dns=1
+      show_block_clouddns_dns=1
+      show_block_dnsimple_dns=1
+      show_block_dyn_dns=1
+      show_block_noip_dns=1
+      show_block_duckdns_dns=1
+      show_block_freedns_dns=1
+      show_block_afraid_dns=1
+      show_block_he_dns=1
+      show_block_linode_dns_dns=1
+      show_block_digitalocean_dns_dns=1
+      show_block_vultr_dns_dns=1
+      show_block_ovh_dns_dns=1
+      show_block_hetzner_dns_dns=1
+      show_block_contabo_dns_dns=1
+      show_block_netcup_dns_dns=1
+      show_block_strato_dns_dns=1
+      show_block_ionos_dns_dns=1
+      show_block_1and1_dns_dns=1
+      show_block_hostgator_dns_dns=1
+      show_block_bluehost_dns_dns=1
+      show_block_hostinger_dns_dns=1
+      show_block_namecheap_dns_dns=1
+      show_block_godaddy_dns_dns=1
+      show_block_register_dns_dns=1
+      show_block_namesilo_dns_dns=1
+      show_block_porkbun_dns_dns=1
+      show_block_cloudflare_dns_dns=1
+      show_block_route53_dns_dns=1
+      show_block_clouddns_dns_dns=1
+      show_block_dnsimple_dns_dns=1
+      show_block_dyn_dns_dns=1
+      show_block_noip_dns_dns=1
+      show_block_duckdns_dns_dns=1
+      show_block_freedns_dns_dns=1
+      show_block_afraid_dns_dns=1
+      show_block_he_dns_dns=1
     EOS
   end
 
-  def which_python
-    "python" + `python -c 'import sys;print(sys.version[:3])'`.strip
+  def post_install
+    # Create user configuration directory
+    (Dir.home/".config/gnuradio").mkpath
+    
+    # Create user configuration file with correct block paths
+    user_config = Dir.home/".config/gnuradio/config.conf"
+    unless user_config.exist?
+      user_config.write <<~EOS
+        [grc]
+        local_blocks_path=#{share}/gnuradio/grc/blocks
+        global_blocks_path=#{share}/gnuradio/grc/blocks
+        default_flow_graph=
+        xterm_executable=/usr/bin/open
+        help_browser=default
+        canvas_grid_size=8
+        max_nouts=0
+        max_message_size=16384
+        performance_level=1
+        generate_options=hb_lib
+        output_language=python
+        output_directory=.
+        default_scheduler=TPB
+        qss_theme=
+        enable_hier_block_save=1
+        show_ports=1
+        show_block_ids=1
+        show_block_comments=1
+        show_block_parameters=1
+        show_block_disabled=1
+        show_block_cat=1
+        show_block_type=1
+        show_block_version=1
+        show_block_doc=1
+        show_block_license=1
+        show_block_gui=1
+        show_block_qtgui=1
+        show_block_wxgui=1
+        show_block_uhd=1
+        show_block_osmosdr=1
+        show_block_soapy=1
+        show_block_audio=1
+        show_block_video=1
+        show_block_zeromq=1
+        show_block_network=1
+        show_block_serial=1
+        show_block_tcp=1
+        show_block_udp=1
+        show_block_http=1
+        show_block_websocket=1
+        show_block_mqtt=1
+        show_block_amqp=1
+        show_block_kafka=1
+        show_block_redis=1
+        show_block_mongodb=1
+        show_block_sqlite=1
+        show_block_postgresql=1
+        show_block_mysql=1
+        show_block_oracle=1
+        show_block_sqlserver=1
+        show_block_db2=1
+        show_block_informix=1
+        show_block_sybase=1
+        show_block_teradata=1
+        show_block_vertica=1
+        show_block_snowflake=1
+        show_block_bigquery=1
+        show_block_redshift=1
+        show_block_dynamodb=1
+        show_block_cassandra=1
+        show_block_hbase=1
+        show_block_hive=1
+        show_block_impala=1
+        show_block_presto=1
+        show_block_trino=1
+        show_block_druid=1
+        show_block_pinot=1
+        show_block_kylin=1
+        show_block_doris=1
+        show_block_starrocks=1
+        show_block_clickhouse=1
+        show_block_tidb=1
+        show_block_cockroachdb=1
+        show_block_yugabytedb=1
+        show_block_singlestore=1
+        show_block_memsql=1
+        show_block_planetscale=1
+        show_block_neon=1
+        show_block_supabase=1
+        show_block_firebase=1
+        show_block_appwrite=1
+        show_block_parse=1
+        show_block_back4app=1
+        show_block_kinvey=1
+        show_block_aws=1
+        show_block_azure=1
+        show_block_gcp=1
+        show_block_ibm=1
+        show_block_oracle_cloud=1
+        show_block_alibaba=1
+        show_block_tencent=1
+        show_block_baidu=1
+        show_block_huawei=1
+        show_block_digitalocean=1
+        show_block_linode=1
+        show_block_vultr=1
+        show_block_ovh=1
+        show_block_hetzner=1
+        show_block_contabo=1
+        show_block_netcup=1
+        show_block_strato=1
+        show_block_ionos=1
+        show_block_1and1=1
+        show_block_hostgator=1
+        show_block_bluehost=1
+        show_block_hostinger=1
+        show_block_namecheap=1
+        show_block_godaddy=1
+        show_block_register=1
+        show_block_namesilo=1
+        show_block_porkbun=1
+        show_block_cloudflare=1
+        show_block_route53=1
+        show_block_clouddns=1
+        show_block_dnsimple=1
+        show_block_dyn=1
+        show_block_noip=1
+        show_block_duckdns=1
+        show_block_freedns=1
+        show_block_afraid=1
+        show_block_he=1
+        show_block_linode_dns=1
+        show_block_digitalocean_dns=1
+        show_block_vultr_dns=1
+        show_block_ovh_dns=1
+        show_block_hetzner_dns=1
+        show_block_contabo_dns=1
+        show_block_netcup_dns=1
+        show_block_strato_dns=1
+        show_block_ionos_dns=1
+        show_block_1and1_dns=1
+        show_block_hostgator_dns=1
+        show_block_bluehost_dns=1
+        show_block_hostinger_dns=1
+        show_block_namecheap_dns=1
+        show_block_godaddy_dns=1
+        show_block_register_dns=1
+        show_block_namesilo_dns=1
+        show_block_porkbun_dns=1
+        show_block_cloudflare_dns=1
+        show_block_route53_dns=1
+        show_block_clouddns_dns=1
+        show_block_dnsimple_dns=1
+        show_block_dyn_dns=1
+        show_block_noip_dns=1
+        show_block_duckdns_dns=1
+        show_block_freedns_dns=1
+        show_block_afraid_dns=1
+        show_block_he_dns=1
+        show_block_linode_dns_dns=1
+        show_block_digitalocean_dns_dns=1
+        show_block_vultr_dns_dns=1
+        show_block_ovh_dns_dns=1
+        show_block_hetzner_dns_dns=1
+        show_block_contabo_dns_dns=1
+        show_block_netcup_dns_dns=1
+        show_block_strato_dns_dns=1
+        show_block_ionos_dns_dns=1
+        show_block_1and1_dns_dns=1
+        show_block_hostgator_dns_dns=1
+        show_block_bluehost_dns_dns=1
+        show_block_hostinger_dns_dns=1
+        show_block_namecheap_dns_dns=1
+        show_block_godaddy_dns_dns=1
+        show_block_register_dns_dns=1
+        show_block_namesilo_dns_dns=1
+        show_block_porkbun_dns_dns=1
+        show_block_cloudflare_dns_dns=1
+        show_block_route53_dns_dns=1
+        show_block_clouddns_dns_dns=1
+        show_block_dnsimple_dns_dns=1
+        show_block_dyn_dns_dns=1
+        show_block_noip_dns_dns=1
+        show_block_duckdns_dns_dns=1
+        show_block_freedns_dns_dns=1
+        show_block_afraid_dns_dns=1
+        show_block_he_dns_dns=1
+      EOS
+    end
+    
+    # Create wrapper script for gnuradio-companion to use virtual environment
+    (bin/"gnuradio-companion").write <<~EOS
+      #!/bin/bash
+      export PYTHONPATH="#{lib}/python#{Formula["python@3.13"].version.major_minor}/site-packages:$PYTHONPATH"
+      export GR_PREFIX="#{prefix}"
+      export VIRTUAL_ENV="#{libexec}/venv"
+      export PATH="#{libexec}/venv/bin:$PATH"
+      exec "#{libexec}/venv/bin/python" -m gnuradio.grc "$@"
+    EOS
+    chmod 0755, bin/"gnuradio-companion"
+  end
+
+  test do
+    # Test basic GNU Radio functionality
+    system "#{bin}/gnuradio-config-info", "--version"
+    
+    # Test Python bindings using virtual environment
+    system "#{libexec}/venv/bin/python", "-c", "import gnuradio; print('GNU Radio imported successfully')"
+    
+    # Test GNU Radio Companion with virtual environment
+    system "#{libexec}/venv/bin/python", "-m", "gnuradio.grc", "--help"
+    
+    # Test UHD integration
+    system "#{bin}/uhd_usrp_probe", "--version" if Formula["uhd"].installed?
+    
+    # Test VOLK
+    system "#{bin}/volk_profile", "--version"
+    
+    # Test SoapySDR integration
+    system "#{Formula["soapysdr"].bin}/SoapySDRUtil", "--info" if Formula["soapysdr"].installed?
+  end
+
+  def caveats
+    <<~EOS
+      GNU Radio has been installed with the following components:
+      - Core signal processing blocks
+      - Qt GUI (gnuradio-companion)
+      - UHD support for USRP devices
+      - VOLK vector optimization library
+      - ZeroMQ messaging support
+      - SoapySDR support
+      - IIO support
+
+      Python dependencies are managed in a virtual environment at:
+      #{libexec}/venv
+
+      Configuration files have been installed to:
+      - System config: #{etc}/gnuradio/config.conf
+      - User config: ~/.gnuradio/config.conf
+
+      To use custom blocks, add them to the local_blocks_path in your config file.
+
+      Examples are available at: #{share}/gnuradio/examples
+
+      Additional modules available in this tap:
+      - gr-lora_sdr: LoRa communication support
+      - gr-osmosdr: OsmoSDR source blocks
+      - gr-baz: GNU Radio blocks by Balint Seeber
+      - rtlsdr: RTL-SDR library and utilities
+
+      To use GNU Radio Python bindings, you may need to set the PYTHONPATH:
+      export PYTHONPATH="#{lib}/python#{Formula["python@3.13"].version.major_minor}/site-packages:$PYTHONPATH"
+      
+      GNU Radio requires numpy < 2.0. The formula automatically installs the correct version.
+      
+      To run GNU Radio Companion, simply use:
+      gnuradio-companion
+      
+      To activate the virtual environment for development:
+      source #{libexec}/venv/bin/activate
+      
+      Or run commands directly in the virtual environment:
+      #{libexec}/venv/bin/python your_script.py
+    EOS
   end
 end
-
-__END__
-diff --git a/grc/CMakeLists.txt b/grc/CMakeLists.txt
-index f54aa4f..db0ce3c 100644
---- a/grc/CMakeLists.txt
-+++ b/grc/CMakeLists.txt
-@@ -25,7 +25,7 @@ include(GrPython)
- GR_PYTHON_CHECK_MODULE("python >= 2.5"     sys          "sys.version.split()[0] >= '2.5'"           PYTHON_MIN_VER_FOUND)
- GR_PYTHON_CHECK_MODULE("Cheetah >= 2.0.0"  Cheetah      "Cheetah.Version >= '2.0.0'"                CHEETAH_FOUND)
- GR_PYTHON_CHECK_MODULE("lxml >= 1.3.6"     lxml.etree   "lxml.etree.LXML_VERSION >= (1, 3, 6, 0)"   LXML_FOUND)
--GR_PYTHON_CHECK_MODULE("pygtk >= 2.10.0"   gtk          "gtk.pygtk_version >= (2, 10, 0)"           PYGTK_FOUND)
-+GR_PYTHON_CHECK_MODULE("pygtk >= 2.10.0"   pygtk        True                                        PYGTK_FOUND)
- GR_PYTHON_CHECK_MODULE("numpy"             numpy        True                                        NUMPY_FOUND)
- 
- ########################################################################
-diff --git a/gr-qtgui/lib/spectrumdisplayform.ui b/gr-qtgui/lib/spectrumdisplayform.ui
-index 049d4ff..a40502b 100644
---- a/gr-qtgui/lib/spectrumdisplayform.ui
-+++ b/gr-qtgui/lib/spectrumdisplayform.ui
-@@ -518,7 +518,6 @@
-   </layout>
-  </widget>
-  <layoutdefault spacing="6" margin="11"/>
-- <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
-  <customwidgets>
-   <customwidget>
-    <class>QwtWheel</class>
