@@ -107,6 +107,7 @@ class Gnuradio < Formula
     # Set up environment variables
     ENV["PYTHONPATH"] = "#{lib}/python#{python_version}/site-packages"
     ENV["GR_PREFIX"] = prefix
+    ENV["PKG_CONFIG_PATH"] = "#{Formula["qwt-qt5"].lib}/pkgconfig:#{Formula["qt@5"].lib}/pkgconfig"
     
     # Create build directory
     mkdir "build" do
